@@ -11,7 +11,7 @@ def handler(event, context):
                 ServiceRole='EMR_DefaultRole',
                 JobFlowRole='EMR_EC2_DefaultRole',
                 VisibleToAllUsers=True,
-                LogUri='s3://igti-datalake/emr-logs',
+                LogUri='s3://igti-datalake-atheobaldo/emr-logs',
                 ReleaseLabel='emr-6.3.0',
                 Instances={
                     'InstanceGroups': [
@@ -90,7 +90,7 @@ def handler(event, context):
                         'Args': ['spark-submit',
                                  '--master', 'yarn',
                                  '--deploy-mode', 'cluster',
-                                 's3://igti-datalake/emr-code/pyspark/job_tratamento.py'
+                                 's3://igti-datalake-atheobaldo/emr-code/pyspark/job_tratamento.py'
                                  ]
                     }
                 }],

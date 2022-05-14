@@ -7,5 +7,5 @@ variable "lambda_function_name" {
 }
 
 variable "nome_bucket_datalake" {
-  default = "igti-datalake"
+  default = "igti-datalake-atheobaldo"
 }
