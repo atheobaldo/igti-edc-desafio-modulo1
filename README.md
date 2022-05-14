@@ -4,7 +4,7 @@
 
 #### Objetivo do projeto
 
-<img src="imagens\arquitetura.jpg">
+<img src="images\arquitetura.jpg">
 
 <p>
 O seguinte código monta um datalake na AWS com o objetivo de receber os dados do RAIS (Relação Anual de Informações Sociais). 
