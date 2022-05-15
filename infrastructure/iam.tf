@@ -2,26 +2,20 @@ resource "aws_iam_role" "lambda" {
   name = "igti-lambda-role"
 
   assume_role_policy = <<EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Action": "sts:AssumeRole",
-        "Principal": {
-          "Service": "lambda.amazonaws.com"
-        },
-        "Effect": "Allow",
-        "Sid": "AssumeRole"
-      }
-    ]
-  }
-  EOF
-
-  tags = {
-    IES   = "IGTI",
-    CURSO = "EDC"
-  }
-
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": "AssumeRole"
+    }
+  ]
+}
+EOF
 }
 
 resource "aws_iam_policy" "lambda" {
@@ -66,7 +60,6 @@ resource "aws_iam_policy" "lambda" {
 }
 EOF
 }
-
 
 resource "aws_iam_role_policy_attachment" "lambda_attach" {
   role       = aws_iam_role.lambda.name
