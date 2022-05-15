@@ -162,7 +162,7 @@ EOF
   
 }
 
-resource "aws_iam_role_policy_attachment" "emr_attach" {
+resource "aws_iam_role_policy_attachment" "emr_ec2_attach" {
   role       = aws_iam_role.emr-ec2-role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
 }
