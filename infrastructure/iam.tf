@@ -67,9 +67,9 @@ resource "aws_iam_role_policy_attachment" "lambda_attach" {
 }
 
 
-
-### GLUE ###
-
+#
+# GLUE ###
+#
 data "aws_iam_policy_document" "glue_assume_role" {
   statement {
     effect = "Allow"
