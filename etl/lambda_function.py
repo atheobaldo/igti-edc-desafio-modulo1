@@ -30,10 +30,10 @@ def handler(event, context):
                             'InstanceCount': 1,
                         }
                     ],
-                    'Ec2KeyName': 'igti-key-pair',   # Criar key pair em EC2 manualmente e colar aqui
+                    'Ec2KeyName': 'igti-atheobaldo-key-pair',   
                     'KeepJobFlowAliveWhenNoSteps': True,
                     'TerminationProtected': False,
-                    'Ec2SubnetId': 'subnet-1df20360'        # recuperar subnet id da região us-east-2 manualmente e colar aqui
+                    'Ec2SubnetId': 'subnet-05c71871d62eb9920'        
                 },
 
                 Applications=[
