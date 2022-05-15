@@ -67,62 +67,56 @@ resource "aws_iam_role_policy_attachment" "lambda_attach" {
 }
 
 
+#
+# GLUE ###
+#
+data "aws_iam_policy_document" "glue_assume_role" {
+  statement {
+    effect = "Allow"
 
-### GLUE ###
-resource "aws_iam_role" "glue_role" {
-  name = "igti-glue-crawler-role"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "glue.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
+    principals {
+      type        = "Service"
+      identifiers = ["glue.amazonaws.com"]
     }
-  ]
-}
-EOF
 
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "glue_service_role" {
+  name = "igti-glue-role"
+  assume_role_policy = "${data.aws_iam_policy_document.glue_assume_role.json}"
   tags = {
     IES   = "IGTI",
     CURSO = "EDC"
   }
 
 }
-
-
 resource "aws_iam_role_policy_attachment" "glue_attach" {
-  role       = aws_iam_role.glue_role.name
+  role       = aws_iam_role.glue_service_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
 }
 
+#
+# EMR IAM resources
+#
 
-### EMR  ###
+data "aws_iam_policy_document" "emr_assume_role" {
+  statement {
+    effect = "Allow"
 
-resource "aws_iam_role" "emr-role" {
+    principals {
+      type        = "Service"
+      identifiers = ["elasticmapreduce.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "emr_service_role" {
   name = "igti-emr-role"
-
-  assume_role_policy = <<EOF
-{
-    "Version": "2008-10-17",
-    "Statement": [
-        {
-            "Sid": "",
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "elasticmapreduce.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
-}
-EOF
-
+  assume_role_policy = "${data.aws_iam_policy_document.emr_assume_role.json}"
   tags = {
     IES   = "IGTI",
     CURSO = "EDC"
@@ -130,39 +124,43 @@ EOF
 
 }
 
-resource "aws_iam_role_policy_attachment" "emr_attach" {
-  role       = aws_iam_role.emr-role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2"
+resource "aws_iam_role_policy_attachment" "emr_service_role" {
+  role       = "${aws_iam_role.emr_service_role.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceRole"
 }
 
+#
+# EMR IAM resources for EC2
+#
+data "aws_iam_policy_document" "ec2_assume_role" {
+  statement {
+    effect = "Allow"
 
-resource "aws_iam_role" "emr-ec2-role" {
-  name = "igti-emr-ec2-role"
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
 
-  assume_role_policy = <<EOF
-{
-    "Version": "2008-10-17",
-    "Statement": [
-        {
-            "Sid": "",
-            "Effect": "Allow",
-            "Principal": {
-                "Service": "ec2.amazonaws.com"
-            },
-            "Action": "sts:AssumeRole"
-        }
-    ]
+    actions = ["sts:AssumeRole"]
+  }
 }
-EOF
 
-  tags = {
+resource "aws_iam_role" "emr_ec2_instance_profile" {
+  name               = "igti-emr-ec2-role"
+  assume_role_policy = "${data.aws_iam_policy_document.ec2_assume_role.json}"
+    tags = {
     IES   = "IGTI",
     CURSO = "EDC"
   }
-  
+
 }
 
-resource "aws_iam_role_policy_attachment" "emr_ec2_attach" {
-  role       = aws_iam_role.emr-ec2-role.name
+resource "aws_iam_role_policy_attachment" "emr_ec2_instance_profile" {
+  role       = "${aws_iam_role.emr_ec2_instance_profile.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
+}
+
+resource "aws_iam_instance_profile" "emr_ec2_instance_profile" {
+  name = "${aws_iam_role.emr_ec2_instance_profile.name}"
+  role = "${aws_iam_role.emr_ec2_instance_profile.name}"
 }

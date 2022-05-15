@@ -33,7 +33,7 @@ def handler(event, context):
             'Ec2KeyName': 'igti-atheobaldo-key-pair',   
             'KeepJobFlowAliveWhenNoSteps': True,
             'TerminationProtected': False,
-            'Ec2SubnetId': 'subnet-0aaa84a0e47b3796e'        
+            'Ec2SubnetId': 'subnet-0aaa84a0e47b3796e'       # ${aws_subnet.main.id}  
         },
 
         Applications=[
