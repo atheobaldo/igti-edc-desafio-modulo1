@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "datalake" {
-  bucket = var.nome_bucket_datalake
+  bucket = "${var.nome_bucket}"
   acl    = "private"
 
   tags = {
