@@ -16,11 +16,6 @@ resource "aws_iam_role" "lambda" {
   ]
 }
 EOF
-  tags = {
-    IES   = "IGTI",
-    CURSO = "EDC"
-  }
-
 }
 
 resource "aws_iam_policy" "lambda" {
@@ -65,7 +60,6 @@ resource "aws_iam_policy" "lambda" {
 }
 EOF
 }
-
 
 resource "aws_iam_role_policy_attachment" "lambda_attach" {
   role       = aws_iam_role.lambda.name
