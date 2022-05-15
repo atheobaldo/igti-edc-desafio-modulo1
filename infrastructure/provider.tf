@@ -6,7 +6,7 @@ provider "aws" {
 # Criar bucket manualmente na AWS
 terraform {
   backend "s3" {
-    bucket = "igti-datalake-atheobaldo"
+    bucket = "igti-terraform-atheobaldo"
     key    = "terraform/state/terraform.tfstate"
     region = "sa-east-1"
   }
