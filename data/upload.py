@@ -15,7 +15,7 @@ def upload_arquivo():
     print("Fazendo upload...")
     for i in range(len(files)):
         s3_client.upload_file(files[i],
-                              "igti-datalake",
+                              "igti-datalake-atheobaldo",
                               "raw-data/rais/" + files[i])
         print("Finalizado: " + files[i])
     print("Sucesso")

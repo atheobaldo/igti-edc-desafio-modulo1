@@ -18,7 +18,7 @@ rais = (
     .option("inferSchema", True)
     .option("delimiter", ";")
     .option("encoding", "latin1")
-    .load("s3://igti-datalake/raw-data/rais/")
+    .load("s3://igti-datalake-atheobaldo/raw-data/rais/")
 )
 
 rais = (
@@ -113,5 +113,5 @@ rais = (
     .write.mode('overwrite')
     .partitionBy('ano', 'uf')
     .format('parquet')
-    .save("s3://igti-datalake/staging/rais")
+    .save("s3://igti-datalake-atheobaldo/staging/rais")
 )
