@@ -52,8 +52,8 @@ resource "aws_iam_policy" "lambda" {
         },
         {
           "Action": "iam:PassRole",
-          "Resource": ["arn:aws:iam::234428941834:role/EMR_DefaultRole",
-                       "arn:aws:iam::234428941834:role/EMR_EC2_DefaultRole"],
+          "Resource": ["arn:aws:iam::${var.conta_aws}:role/igti-emr-role",
+                       "arn:aws:iam::${var.conta_aws}:role/igti-emr-ec2-role"],
           "Effect": "Allow"
         }
     ]
@@ -67,10 +67,8 @@ resource "aws_iam_role_policy_attachment" "lambda_attach" {
 }
 
 
-###############
-## GLUE #######
-###############
 
+### GLUE ###
 resource "aws_iam_role" "glue_role" {
   name = "igti-glue-crawler-role"
 
@@ -97,96 +95,74 @@ EOF
 
 }
 
-resource "aws_iam_policy" "glue_policy" {
-  name        = "igti-aws-glue-service-role"
-  path        = "/"
-  description = "Policy for AWS Glue service role which allows access to related services including EC2, S3, and Cloudwatch Logs"
 
-  policy = <<EOF
+resource "aws_iam_role_policy_attachment" "glue_attach" {
+  role       = aws_iam_role.glue_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+}
+
+
+### EMR  ###
+
+resource "aws_iam_role" "emr-role" {
+  name = "igti-emr-role"
+
+  assume_role_policy = <<EOF
 {
-    "Version": "2012-10-17",
+    "Version": "2008-10-17",
     "Statement": [
         {
+            "Sid": "",
             "Effect": "Allow",
-            "Action": [
-                "glue:*",
-                "s3:GetBucketLocation",
-                "s3:ListBucket",
-                "s3:ListAllMyBuckets",
-                "s3:GetBucketAcl",
-                "ec2:DescribeVpcEndpoints",
-                "ec2:DescribeRouteTables",
-                "ec2:CreateNetworkInterface",
-                "ec2:DeleteNetworkInterface",
-                "ec2:DescribeNetworkInterfaces",
-                "ec2:DescribeSecurityGroups",
-                "ec2:DescribeSubnets",
-                "ec2:DescribeVpcAttribute",
-                "iam:ListRolePolicies",
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "cloudwatch:PutMetricData"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:CreateBucket"
-            ],
-            "Resource": [
-                "arn:aws:s3:::aws-glue-*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject",
-                "s3:PutObject",
-                "s3:DeleteObject"
-            ],
-            "Resource": [
-                "*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-            ],
-            "Resource": [
-                "arn:aws:logs:*:*:/aws-glue/*"
-            ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "ec2:CreateTags",
-                "ec2:DeleteTags"
-            ],
-            "Condition": {
-                "ForAllValues:StringEquals": {
-                    "aws:TagKeys": [
-                        "aws-glue-service-resource"
-                    ]
-                }
+            "Principal": {
+                "Service": "elasticmapreduce.amazonaws.com"
             },
-            "Resource": [
-                "arn:aws:ec2:*:*:network-interface/*",
-                "arn:aws:ec2:*:*:security-group/*",
-                "arn:aws:ec2:*:*:instance/*"
-            ]
+            "Action": "sts:AssumeRole"
         }
     ]
 }
 EOF
+
+  tags = {
+    IES   = "IGTI",
+    CURSO = "EDC"
+  }
+
 }
 
-resource "aws_iam_role_policy_attachment" "glue_attach" {
-  role       = aws_iam_role.glue_role.name
-  policy_arn = aws_iam_policy.glue_policy.arn
+resource "aws_iam_role_policy_attachment" "emr_attach" {
+  role       = aws_iam_role.emr-role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEMRServicePolicy_v2"
+}
+
+
+resource "aws_iam_role" "emr-ec2-role" {
+  name = "igti-emr-ec2-role"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2008-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+EOF
+
+  tags = {
+    IES   = "IGTI",
+    CURSO = "EDC"
+  }
+  
+}
+
+resource "aws_iam_role_policy_attachment" "emr_attach" {
+  role       = aws_iam_role.emr-ec2-role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonElasticMapReduceforEC2Role"
 }
