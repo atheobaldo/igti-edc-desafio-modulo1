@@ -5,7 +5,7 @@ resource "aws_glue_catalog_database" "db" {
 resource "aws_glue_crawler" "RAIS" {
   database_name = aws_glue_catalog_database.db.name
   name          = "s3_crawler_rais"
-  role          = aws_iam_role.glue_role.arn
+  role          = aws_iam_role.glue_service_role.arn
 
   s3_target {
     path = "s3://${var.nome_bucket}/staging/rais/"
