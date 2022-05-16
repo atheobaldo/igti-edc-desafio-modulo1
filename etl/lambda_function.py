@@ -4,7 +4,7 @@ def handler(event, context):
     """
     Lambda function that starts a job flow in EMR.
     """
-    client = boto3.client('emr', region_name='sa-east-1')
+    client = boto3.client('emr', region_name='us-east-2')
 
     cluster_id = client.run_job_flow(
         Name='igti-emr',
@@ -33,7 +33,7 @@ def handler(event, context):
             'Ec2KeyName': 'igti-atheobaldo-key-pair',   
             'KeepJobFlowAliveWhenNoSteps': True,
             'TerminationProtected': False,
-            'Ec2SubnetId': 'subnet-0aaa84a0e47b3796e'       # ${aws_subnet.main.id}  
+            'Ec2SubnetId': 'subnet-5b551a17'       # ${aws_subnet.main.id}  
         },
 
         Applications=[
